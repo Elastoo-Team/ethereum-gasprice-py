@@ -10,13 +10,13 @@ __all__ = ["EtherscanProvider"]
 
 
 class EtherscanProvider(BaseGaspriceProvider):
-    provider_title = "etherscan"
+    provider_title: str = "etherscan"
+    api_url: str = "https://api.etherscan.io/api/"
 
     def __init__(
         self,
         api_key: str = None,
     ):
-        self.api_url: str = "https://api.etherscan.io/api/"
         self.api_key: str = api_key or self._secret_from_env_var()
 
     def _secret_from_env_var(self) -> Optional[str]:
@@ -35,7 +35,7 @@ class EtherscanProvider(BaseGaspriceProvider):
 
         response_data = response.json()
 
-        if not response_data.get("status") == "1":
+        if response.status_code != 200 or not response_data.get("status") == "1":
             return success, data
 
         success = True
