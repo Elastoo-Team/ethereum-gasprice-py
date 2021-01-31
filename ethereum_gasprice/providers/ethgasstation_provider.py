@@ -3,12 +3,15 @@ from typing import Dict, Tuple, Optional
 
 import requests
 
+from ethereum_gasprice.consts import GaspriceStrategy
 from ethereum_gasprice.providers.base import BaseGaspriceProvider
 
 __all__ = ["EthGasStationProvider"]
 
 
 class EthGasStationProvider(BaseGaspriceProvider):
+    provider_title = "ethgasstation"
+
     def __init__(
             self,
             api_key: str = None,
@@ -19,14 +22,9 @@ class EthGasStationProvider(BaseGaspriceProvider):
     def _secret_from_env_var(self) -> Optional[str]:
         return getenv("ETHGASSTATION_API_KEY")
 
-    def get_gasprice(self) -> Tuple[bool, Dict[str, int]]:
+    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
         success = False
-        data = {
-            "slow": 0,
-            "regular": 0,
-            "fast": 0,
-            "fastest": 0,
-        }
+        data = self._data_template.copy()
 
         if not self.api_key:
             return success, data
@@ -47,13 +45,13 @@ class EthGasStationProvider(BaseGaspriceProvider):
 
         success = True
         data.update({
-            "slow": response_data.get("safeLow"),
-            "regular": response_data.get("average"),
-            "fast": response_data.get("fast"),
-            "fastest": response_data.get("fastest"),
+            GaspriceStrategy.SLOW: response_data.get("safeLow"),
+            GaspriceStrategy.REGULAR: response_data.get("average"),
+            GaspriceStrategy.FAST: response_data.get("fast"),
+            GaspriceStrategy.FASTEST: response_data.get("fastest"),
         })
 
         for k, v in data.items():
-            data[k] = int(v) // 10
+            data[k] = int(v) // 10 if v else None
 
         return success, data

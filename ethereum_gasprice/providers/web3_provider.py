@@ -1,15 +1,18 @@
 from os import getenv
 from typing import Dict, Tuple, Optional
 
-from web3 import Web3, HTTPProvider, WebsocketProvider, IPCProvider
 from eth_utils import currency
+from web3 import Web3, HTTPProvider, WebsocketProvider, IPCProvider
 
 from ethereum_gasprice.providers.base import BaseGaspriceProvider
+from ethereum_gasprice.consts import GaspriceStrategy
 
 __all__ = ["Web3Provider"]
 
 
 class Web3Provider(BaseGaspriceProvider):
+    provider_title = "web3"
+
     def __init__(
             self,
             provider_link: str = None
@@ -31,14 +34,9 @@ class Web3Provider(BaseGaspriceProvider):
         else:
             return None
 
-    def get_gasprice(self) -> Tuple[bool, Dict[str, int]]:
+    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
         success = False
-        data = {
-            "slow": 0,
-            "regular": 0,
-            "fast": 0,
-            "fastest": 0,
-        }
+        data = self._data_template.copy()
 
         web3 = self._init_web3()
 
@@ -46,10 +44,6 @@ class Web3Provider(BaseGaspriceProvider):
             return success, data
 
         success = True
-        data.update({
-            "regular": int(currency.from_wei(web3.eth.gasPrice, "gwei")),
-            "fast": 0,
-            "fastest": 0,
-        })
+        data[GaspriceStrategy.REGULAR] = int(currency.from_wei(web3.eth.gasPrice, "gwei"))
 
         return success, data

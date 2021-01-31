@@ -1,9 +1,20 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Tuple, Dict
 
+from ethereum_gasprice.consts import GaspriceStrategy
+
 
 class BaseGaspriceProvider(ABC):
-    provider = NotImplemented
+    provider_title = NotImplemented
+
+    @property
+    def _data_template(self) -> Dict[GaspriceStrategy, Optional[int]]:
+        return {
+            GaspriceStrategy.SLOW: None,
+            GaspriceStrategy.REGULAR: None,
+            GaspriceStrategy.FAST: None,
+            GaspriceStrategy.FASTEST: None,
+        }
 
     @abstractmethod
     def _secret_from_env_var(self) -> Optional[str]:

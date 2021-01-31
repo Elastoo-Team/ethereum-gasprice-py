@@ -3,13 +3,14 @@ from typing import Dict, Tuple, Optional
 
 import requests
 
+from ethereum_gasprice.consts import GaspriceStrategy
 from ethereum_gasprice.providers.base import BaseGaspriceProvider
 
 __all__ = ["EtherscanProvider"]
 
 
 class EtherscanProvider(BaseGaspriceProvider):
-    provider = "etherscan"
+    provider_title = "etherscan"
 
     def __init__(
             self,
@@ -21,14 +22,10 @@ class EtherscanProvider(BaseGaspriceProvider):
     def _secret_from_env_var(self) -> Optional[str]:
         return getenv("ETHERSCAN_API_KEY")
 
-    def get_gasprice(self) -> Tuple[bool, Dict[str, int]]:
+    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
         success = False
-        data = {
-            "slow": 0,
-            "regular": 0,
-            "fast": 0,
-            "fastest": 0,
-        }
+        data = self._data_template.copy()
+
         try:
             response = requests.get(
                 url=self.api_url,
@@ -47,9 +44,9 @@ class EtherscanProvider(BaseGaspriceProvider):
 
         success = True
         data.update({
-            "regular": response_data["result"].get("SafeGasPrice"),
-            "fast": response_data["result"].get("ProposeGasPrice"),
-            "fastest": response_data["result"].get("FastGasPrice"),
+            GaspriceStrategy.REGULAR: response_data["result"].get("SafeGasPrice"),
+            GaspriceStrategy.FAST: response_data["result"].get("ProposeGasPrice"),
+            GaspriceStrategy.FASTEST: response_data["result"].get("FastGasPrice"),
         })
 
         return success, data

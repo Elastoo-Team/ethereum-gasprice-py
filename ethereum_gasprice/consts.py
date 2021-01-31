@@ -14,3 +14,6 @@ class GaspriceStrategy(str, Enum):
     REGULAR = "regular"
     FAST = "fast"
     FASTEST = "fastest"
+
+    def __repr__(self):
+        return "<%s: %r>" % (self.__class__.__name__, self._value_)
