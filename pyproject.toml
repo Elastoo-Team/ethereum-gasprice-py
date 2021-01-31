@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "ethereum-gasprice"
 version = "1.0.0"
-description = "Tool for fetching actual gasprice for ethereum blockchain"
+description = "Tool for fetching actual gasprice in ethereum blockchain"
 authors = ["Nikita Yugov <nikitosnikn@yandex.ru>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/Elastoo-Team/ethereum-gasprice-py"
+repository = "https://github.com/Elastoo-Team/ethereum-gasprice-py"
+keywords = ["ethereum", "gasprice", "web3", "etherscan", "ethgasstation"]
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
