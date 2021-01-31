@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, Dict
+from typing import Dict, Optional, Tuple
 
 from ethereum_gasprice.consts import GaspriceStrategy
 

@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 import requests
 
@@ -13,8 +13,8 @@ class EtherscanProvider(BaseGaspriceProvider):
     provider_title = "etherscan"
 
     def __init__(
-            self,
-            api_key: str = None,
+        self,
+        api_key: str = None,
     ):
         self.api_url: str = "https://api.etherscan.io/api/"
         self.api_key: str = api_key or self._secret_from_env_var()
@@ -28,13 +28,9 @@ class EtherscanProvider(BaseGaspriceProvider):
 
         try:
             response = requests.get(
-                url=self.api_url,
-                params={
-                    "module": "gastracker",
-                    "action": "gasoracle",
-                    "apikey": self.api_key
-                })
-        except Exception as e:
+                url=self.api_url, params={"module": "gastracker", "action": "gasoracle", "apikey": self.api_key}
+            )
+        except Exception:
             return success, data
 
         response_data = response.json()
@@ -43,10 +39,12 @@ class EtherscanProvider(BaseGaspriceProvider):
             return success, data
 
         success = True
-        data.update({
-            GaspriceStrategy.REGULAR: response_data["result"].get("SafeGasPrice"),
-            GaspriceStrategy.FAST: response_data["result"].get("ProposeGasPrice"),
-            GaspriceStrategy.FASTEST: response_data["result"].get("FastGasPrice"),
-        })
+        data.update(
+            {
+                GaspriceStrategy.REGULAR: response_data["result"].get("SafeGasPrice"),
+                GaspriceStrategy.FAST: response_data["result"].get("ProposeGasPrice"),
+                GaspriceStrategy.FASTEST: response_data["result"].get("FastGasPrice"),
+            }
+        )
 
         return success, data

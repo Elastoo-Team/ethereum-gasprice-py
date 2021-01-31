@@ -1,11 +1,11 @@
 from os import getenv
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 from eth_utils import currency
-from web3 import Web3, HTTPProvider, WebsocketProvider, IPCProvider
+from web3 import HTTPProvider, IPCProvider, Web3, WebsocketProvider
 
-from ethereum_gasprice.providers.base import BaseGaspriceProvider
 from ethereum_gasprice.consts import GaspriceStrategy
+from ethereum_gasprice.providers.base import BaseGaspriceProvider
 
 __all__ = ["Web3Provider"]
 
@@ -13,10 +13,7 @@ __all__ = ["Web3Provider"]
 class Web3Provider(BaseGaspriceProvider):
     provider_title = "web3"
 
-    def __init__(
-            self,
-            provider_link: str = None
-    ):
+    def __init__(self, provider_link: str = None):
         self.provider_link: str = provider_link or self._secret_from_env_var()
 
     def _secret_from_env_var(self) -> Optional[str]:

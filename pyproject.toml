@@ -15,6 +15,27 @@ eth-utils = "^1.10.0"
 bumpversion = "^0.6.0"
 pre-commit = "^2.10.0"
 
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | migrations
+  )
+)
+'''
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
