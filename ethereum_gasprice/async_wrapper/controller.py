@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict, Optional, Type, Union
 
 from ethereum_gasprice.async_wrapper.providers import (
@@ -64,11 +65,11 @@ class AsyncGaspriceController(GaspriceController):
 
     async def get_gasprice_from_all_sources(self) -> Dict[str, Dict[str, int]]:
         data = {}
+        providers = [self._init_provider(provider) for provider in self.providers_priority]
+        results = await asyncio.gather(*[provider.get_gasprice() for provider in providers])
 
-        for provider in self.providers_priority:
-            data[provider.provider_title] = {}
-            provider_instance = self._init_provider(provider)
-            status, gasprice_data = await provider_instance.get_gasprice()
+        for result, provider in zip(results, providers):
+            status, gasprice_data = result
             if not status:
                 continue
 
