@@ -1,28 +1,15 @@
-from os import getenv
 from typing import Dict, Optional, Tuple
 
-import requests
+from aiohttp import ClientSession
 
 from ethereum_gasprice.consts import GaspriceStrategy
-from ethereum_gasprice.providers.base import BaseGaspriceProvider
+from ethereum_gasprice.providers.ethgasstation_provider import EthGasStationProvider
 
-__all__ = ["EthGasStationProvider"]
+__all__ = ["AsyncEthGasStationProvider"]
 
 
-class EthGasStationProvider(BaseGaspriceProvider):
-    provider_title: str = "ethgasstation"
-    api_url: str = "https://ethgasstation.info/api/ethgasAPI.json"
-
-    def __init__(
-        self,
-        api_key: str = None,
-    ):
-        self.api_key: str = api_key or self._secret_from_env_var()
-
-    def _secret_from_env_var(self) -> Optional[str]:
-        return getenv("ETHGASSTATION_API_KEY")
-
-    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
+class AsyncEthGasStationProvider(EthGasStationProvider):
+    async def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
         success = False
         data = self._data_template.copy()
 
@@ -30,14 +17,14 @@ class EthGasStationProvider(BaseGaspriceProvider):
             return success, data
 
         try:
-            response = requests.get(url=self.api_url, params={"api-key": self.api_key})
+            async with ClientSession() as session:
+                async with session.get(url=self.api_url, params={"api-key": self.api_key}) as response:
+                    response_data = await response.json()
 
         except Exception:
             return success, data
 
-        response_data = response.json()
-
-        if response.status_code != 200:
+        if response.status != 200:
             return success, data
 
         success = True

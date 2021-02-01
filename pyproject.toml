@@ -17,6 +17,7 @@ python = "^3.8"
 requests = "^2.25.1"
 web3 = "^5.15.0"
 eth-utils = "^1.10.0"
+aiohttp = {version = "^3.7.3", optional = true}
 
 [tool.poetry.dev-dependencies]
 bumpversion = "^0.6.0"
