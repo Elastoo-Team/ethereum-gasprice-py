@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ethereum-gasprice"
-version = "1.0.0"
+version = "1.0.1"
 description = "Tool for fetching actual gasprice in ethereum blockchain"
 authors = ["Nikita Yugov <nikitosnikn@yandex.ru>"]
 license = "MIT"
@@ -45,5 +45,5 @@ exclude = '''
 '''
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.1"]
 build-backend = "poetry.core.masonry.api"
