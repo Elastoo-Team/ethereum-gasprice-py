@@ -23,6 +23,9 @@ aiohttp = {version = "^3.7.3", optional = true}
 bumpversion = "^0.6.0"
 pre-commit = "^2.10.0"
 
+[tool.poetry.extras]
+aiohttp = ["aiohttp"]
+
 [tool.black]
 line-length = 120
 include = '\.pyi?$'
