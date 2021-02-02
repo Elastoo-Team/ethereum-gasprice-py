@@ -17,9 +17,5 @@ class BaseGaspriceProvider(ABC):
         }
 
     @abstractmethod
-    def _secret_from_env_var(self) -> Optional[str]:
-        pass
-
-    @abstractmethod
     def get_gasprice(self) -> Tuple[bool, Dict[str, int]]:
         pass

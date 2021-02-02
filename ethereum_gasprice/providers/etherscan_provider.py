@@ -10,19 +10,20 @@ __all__ = ["EtherscanProvider"]
 
 
 class EtherscanProvider(BaseGaspriceProvider):
+    """Provider for Etherscan Gas Tracker (https://etherscan.io/gasTracker)"""
+
     provider_title: str = "etherscan"
     api_url: str = "https://api.etherscan.io/api/"
+    env_var_title: str = "ETHGASPRICE_ETHERSCAN"
 
     def __init__(
         self,
         api_key: str = None,
     ):
-        self.api_key: str = api_key or self._secret_from_env_var()
-
-    def _secret_from_env_var(self) -> Optional[str]:
-        return getenv("ETHERSCAN_API_KEY")
+        self.api_key: str = api_key or getenv(self.env_var_title)
 
     def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
+        """Get gasprice from provider and prepare data."""
         success = False
         data = self._data_template.copy()
 

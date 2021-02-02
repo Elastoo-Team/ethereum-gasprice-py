@@ -26,6 +26,11 @@ class AsyncGaspriceController(GaspriceController):
         self,
         provider: Type[BaseGaspriceProvider],
     ) -> Union[AsyncEtherscanProvider, AsyncEthGasStationProvider, AsyncWeb3Provider]:
+        """Initialize provider class with correct parameter.
+
+        :param provider:
+        :return:
+        """
         if provider == AsyncEtherscanProvider:
             return AsyncEtherscanProvider(self.etherscan_api_key)
         elif provider == AsyncEthGasStationProvider:
@@ -38,6 +43,11 @@ class AsyncGaspriceController(GaspriceController):
     async def get_gasprice_by_strategy(
         self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST
     ) -> Optional[int]:
+        """Get gasprice with chosen strategy from first available provider.
+
+        :param strategy:
+        :return:
+        """
         for provider in self.providers_priority:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = await provider_instance.get_gasprice()
@@ -49,6 +59,10 @@ class AsyncGaspriceController(GaspriceController):
         return None
 
     async def get_gasprices(self) -> Optional[Dict[GaspriceStrategy, Optional[int]]]:
+        """Get all gasprice strategies values from first available provider.
+
+        :return:
+        """
         for provider in self.providers_priority:
             provider_instance = self._init_provider(provider)
 
@@ -64,6 +78,15 @@ class AsyncGaspriceController(GaspriceController):
         return None
 
     async def get_gasprice_from_all_sources(self) -> Dict[str, Dict[str, int]]:
+        """Get all gasprices from all available providers.
+
+        Uses asyncio.gather to speed up requests
+
+        It is useful when you don't trust single provider and what to verify gasprice with other providers.
+        It is a good pratice to calculate an average gasprice for every strategy and take the average gasprice value.
+
+        :return:
+        """
         data = {}
         providers = [self._init_provider(provider) for provider in self.providers_priority]
         results = await asyncio.gather(*[provider.get_gasprice() for provider in providers])
