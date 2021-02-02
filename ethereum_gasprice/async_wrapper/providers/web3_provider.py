@@ -8,4 +8,5 @@ __all__ = ["AsyncWeb3Provider"]
 
 class AsyncWeb3Provider(Web3Provider):
     async def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
+        """Get gasprice from provider and prepare data."""
         return super().get_gasprice()

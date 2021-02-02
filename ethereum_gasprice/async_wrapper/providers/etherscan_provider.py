@@ -10,6 +10,7 @@ __all__ = ["AsyncEtherscanProvider"]
 
 class AsyncEtherscanProvider(EtherscanProvider):
     async def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
+        """Get gasprice from provider and prepare data."""
         success = False
         data = self._data_template.copy()
 

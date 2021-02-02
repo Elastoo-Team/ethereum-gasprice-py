@@ -14,6 +14,8 @@ __all__ = ["GaspriceController"]
 
 
 class GaspriceController:
+    """Entrypoint for fetching gasprice."""
+
     def __init__(
         self,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
@@ -26,6 +28,13 @@ class GaspriceController:
             Web3Provider,
         ),
     ):
+        """
+        :param return_unit: ethereum unit, which
+        :param etherscan_api_key: api key for etherscan
+        :param ethgasstation_api_key: api key for ethgasstation
+        :param web3_provider_url: url for web3
+        :param providers_priority: tuple of providers classes, which will be initialized and used in given order
+        """
         self.return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = return_unit
         self.providers_priority: Tuple[Type[BaseGaspriceProvider]] = providers_priority
 
@@ -43,6 +52,11 @@ class GaspriceController:
         self,
         provider: Type[BaseGaspriceProvider],
     ) -> Union[EtherscanProvider, EthGasStationProvider, Web3Provider]:
+        """Initialize provider class with correct parameter.
+
+        :param provider:
+        :return:
+        """
         if provider == EtherscanProvider:
             return EtherscanProvider(self.etherscan_api_key)
         elif provider == EthGasStationProvider:
@@ -56,6 +70,13 @@ class GaspriceController:
     def _convert_units(
         unit_from: EthereumUnit = EthereumUnit.GWEI, unit_to: EthereumUnit = EthereumUnit.WEI, value: int = None
     ) -> Optional[int]:
+        """Convert gasprice from provider to chosen unit.
+
+        :param unit_from: Origin gasprice unit. Usually it is in gwei
+        :param unit_to: Target gasprice unit
+        :param value: Gasprice itselt
+        :return:
+        """
         if value is None or unit_from == unit_to:
             return value
         if unit_to == EthereumUnit.WEI:
@@ -64,6 +85,11 @@ class GaspriceController:
         return int(from_wei(to_wei(value, unit_from), unit_to))
 
     def get_gasprice_by_strategy(self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST) -> Optional[int]:
+        """Get gasprice with chosen strategy from first available provider.
+
+        :param strategy:
+        :return:
+        """
         for provider in self.providers_priority:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
@@ -75,6 +101,10 @@ class GaspriceController:
         return None
 
     def get_gasprices(self) -> Optional[Dict[GaspriceStrategy, Optional[int]]]:
+        """Get all gasprice strategies values from first available provider.
+
+        :return:
+        """
         for provider in self.providers_priority:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
@@ -89,6 +119,13 @@ class GaspriceController:
         return None
 
     def get_gasprice_from_all_sources(self) -> Dict[str, Dict[str, int]]:
+        """Get all gasprices from all available providers.
+
+        It is useful when you don't trust single provider and what to verify gasprice with other providers.
+        It is a good pratice to calculate an average gasprice for every strategy and take the average gasprice value.
+
+        :return:
+        """
         data = {}
 
         for provider in self.providers_priority:
