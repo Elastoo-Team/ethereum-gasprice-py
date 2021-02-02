@@ -3,6 +3,7 @@ Ethereum gasprice: Actual gasprice for ethereum blockchain
 
 [![PyPI](https://img.shields.io/pypi/v/ethereum-gasprice)](https://pypi.org/project/ethereum-gasprice/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dw/ethereum-gasprice)](https://pypi.org/project/ethereum-gasprice/)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FElastoo-Team%2Fethereum-gasprice-py%2Fbadge&style=flat)](https://actions-badge.atrox.dev/Elastoo-Team/ethereum-gasprice-py/goto)
 
 Library for fetching actual ethereum blockchain gasprice from different sources:
 [Etherscan Gas Tracker](https://etherscan.io/gastracker), [Eth Gas Station](https://ethgasstation.info/),

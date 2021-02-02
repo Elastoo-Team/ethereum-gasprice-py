@@ -13,7 +13,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 requests = "^2.25.1"
 web3 = "^5.15.0"
 eth-utils = "^1.10.0"
@@ -22,6 +22,9 @@ aiohttp = {version = "^3.7.3", optional = true}
 [tool.poetry.dev-dependencies]
 bumpversion = "^0.6.0"
 pre-commit = "^2.10.0"
+
+[tool.poetry.extras]
+aiohttp = ["aiohttp"]
 
 [tool.black]
 line-length = 120
