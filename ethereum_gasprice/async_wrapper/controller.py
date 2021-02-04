@@ -1,10 +1,10 @@
 import asyncio
-from typing import Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type, Union
 
 from ethereum_gasprice.async_wrapper.providers import (
+    AsyncEtherchainProvider,
     AsyncEtherscanProvider,
     AsyncEthGasStationProvider,
-    AsyncWeb3Provider,
 )
 from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
 from ethereum_gasprice.controller import GaspriceController
@@ -18,14 +18,14 @@ class AsyncGaspriceController(GaspriceController):
         provider_priority = kwargs.get("provider_priority") or (
             AsyncEtherscanProvider,
             AsyncEthGasStationProvider,
-            AsyncWeb3Provider,
+            AsyncEtherchainProvider,
         )
         super().__init__(providers_priority=provider_priority, **kwargs)
 
     def _init_provider(
         self,
         provider: Type[BaseGaspriceProvider],
-    ) -> Union[AsyncEtherscanProvider, AsyncEthGasStationProvider, AsyncWeb3Provider]:
+    ) -> Any:
         """Initialize provider class with correct parameter.
 
         :param provider:
@@ -35,8 +35,8 @@ class AsyncGaspriceController(GaspriceController):
             return AsyncEtherscanProvider(self.etherscan_api_key)
         elif provider == AsyncEthGasStationProvider:
             return AsyncEthGasStationProvider(self.ethgasstation_api_key)
-        elif provider == AsyncWeb3Provider:
-            return AsyncWeb3Provider(self.web3_provider_url)
+        elif provider == AsyncEtherchainProvider:
+            return AsyncEtherchainProvider()
         else:
             raise ValueError("no provider implementation found")
 

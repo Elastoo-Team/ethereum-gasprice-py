@@ -7,6 +7,7 @@ Ethereum gasprice: Actual gasprice for ethereum blockchain
 
 Library for fetching actual ethereum blockchain gasprice from different sources:
 [Etherscan Gas Tracker](https://etherscan.io/gastracker), [Eth Gas Station](https://ethgasstation.info/),
+[Etherchain Gasprice Oracle](https://www.etherchain.org/tools/gasPriceOracle),
 [Web3 RPC Method](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.gasPrice).
 
 Read more about gas and fee from [this article](https://ethereum.org/en/developers/docs/gas/)
