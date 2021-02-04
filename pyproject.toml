@@ -14,10 +14,10 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-requests = "^2.25.1"
-web3 = "^5.15.0"
-eth-utils = "^1.10.0"
-aiohttp = {version = "^3.7.3", optional = true}
+requests = ">=2.18.0"
+web3 = ">=5.1.0"
+eth-utils = ">=1.0.0"
+aiohttp = {version = ">=3.5.0", optional = true}
 
 [tool.poetry.dev-dependencies]
 bumpversion = "^0.6.0"
