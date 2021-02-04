@@ -1,13 +1,13 @@
-from typing import Dict, Literal, Optional, Tuple, Type, Union
+from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
 
 from eth_utils import from_wei, to_wei
 
 from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
 from ethereum_gasprice.providers import (
     BaseGaspriceProvider,
+    EtherchainProvider,
     EtherscanProvider,
     EthGasStationProvider,
-    Web3Provider,
 )
 
 __all__ = ["GaspriceController"]
@@ -25,7 +25,7 @@ class GaspriceController:
         providers_priority: Tuple[Type[BaseGaspriceProvider]] = (
             EtherscanProvider,
             EthGasStationProvider,
-            Web3Provider,
+            EtherchainProvider,
         ),
     ):
         """
@@ -51,7 +51,7 @@ class GaspriceController:
     def _init_provider(
         self,
         provider: Type[BaseGaspriceProvider],
-    ) -> Union[EtherscanProvider, EthGasStationProvider, Web3Provider]:
+    ) -> Any:
         """Initialize provider class with correct parameter.
 
         :param provider:
@@ -61,8 +61,8 @@ class GaspriceController:
             return EtherscanProvider(self.etherscan_api_key)
         elif provider == EthGasStationProvider:
             return EthGasStationProvider(self.ethgasstation_api_key)
-        elif provider == Web3Provider:
-            return Web3Provider(self.web3_provider_url)
+        elif provider == EtherchainProvider:
+            return EtherchainProvider()
         else:
             raise ValueError("no provider implementation found")
 
