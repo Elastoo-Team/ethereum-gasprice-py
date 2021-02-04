@@ -1,89 +1,50 @@
-from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
+from typing import Dict, Literal, Optional, Tuple, Type, Union
 
-from eth_utils import from_wei, to_wei
+from httpx import Client
 
 from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
 from ethereum_gasprice.providers import (
-    BaseGaspriceProvider,
     EtherchainProvider,
     EtherscanProvider,
     EthGasStationProvider,
 )
+from ethereum_gasprice.providers.base import BaseGaspriceProvider
+
+from .base import BaseGaspriceController
 
 __all__ = ["GaspriceController"]
 
 
-class GaspriceController:
+class GaspriceController(BaseGaspriceController):
     """Entrypoint for fetching gasprice."""
 
     def __init__(
         self,
+        *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        etherscan_api_key: Optional[str] = None,
-        ethgasstation_api_key: Optional[str] = None,
-        web3_provider_url: Optional[str] = None,
         providers_priority: Tuple[Type[BaseGaspriceProvider]] = (
             EtherscanProvider,
             EthGasStationProvider,
             EtherchainProvider,
         ),
+        settings: Optional[Dict[str, Optional[str]]] = None
     ):
-        """
-        :param return_unit: ethereum unit, which
-        :param etherscan_api_key: api key for etherscan
-        :param ethgasstation_api_key: api key for ethgasstation
-        :param web3_provider_url: url for web3
-        :param providers_priority: tuple of providers classes, which will be initialized and used in given order
-        """
-        self.return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = return_unit
-        self.providers_priority: Tuple[Type[BaseGaspriceProvider]] = providers_priority
+        super().__init__(return_unit=return_unit, providers_priority=providers_priority, settings=settings)
 
-        self.etherscan_api_key: Optional[str] = etherscan_api_key
-        self.ethgasstation_api_key: Optional[str] = ethgasstation_api_key
-        self.web3_provider_url: Optional[str] = web3_provider_url
+    def __enter__(self):
+        """Init http client and return self."""
+        self._http_client = self._init_http_client()
+        return self
 
-        if len(self.providers_priority) < 1:
-            raise ValueError("providers priority tuple is empty")
+    def __exit__(self, *args):
+        if not self._http_client.is_closed:
+            self._http_client.close()
 
-        if self.return_unit not in (EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH):
-            raise ValueError("invalid return unit")
+    @classmethod
+    def _init_http_client(cls) -> Client:
+        return Client()
 
-    def _init_provider(
-        self,
-        provider: Type[BaseGaspriceProvider],
-    ) -> Any:
-        """Initialize provider class with correct parameter.
-
-        :param provider:
-        :return:
-        """
-        if provider == EtherscanProvider:
-            return EtherscanProvider(self.etherscan_api_key)
-        elif provider == EthGasStationProvider:
-            return EthGasStationProvider(self.ethgasstation_api_key)
-        elif provider == EtherchainProvider:
-            return EtherchainProvider()
-        else:
-            raise ValueError("no provider implementation found")
-
-    @staticmethod
-    def _convert_units(
-        unit_from: EthereumUnit = EthereumUnit.GWEI, unit_to: EthereumUnit = EthereumUnit.WEI, value: int = None
-    ) -> Optional[int]:
-        """Convert gasprice from provider to chosen unit.
-
-        :param unit_from: Origin gasprice unit. Usually it is in gwei
-        :param unit_to: Target gasprice unit
-        :param value: Gasprice itselt
-        :return:
-        """
-        if value is None or unit_from == unit_to:
-            return value
-        if unit_to == EthereumUnit.WEI:
-            return int(to_wei(value, unit_from))
-
-        return int(from_wei(to_wei(value, unit_from), unit_to))
-
+    # TODO follow DRY, unify functions
     def get_gasprice_by_strategy(self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST) -> Optional[int]:
         """Get gasprice with chosen strategy from first available provider.
 
@@ -129,7 +90,7 @@ class GaspriceController:
         data = {}
 
         for provider in self.providers_priority:
-            data[provider.provider_title] = {}
+            data[provider.title] = {}
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
             if not status:
@@ -138,6 +99,6 @@ class GaspriceController:
             for k, v in gasprice_data.items():
                 gasprice_data[k] = self._convert_units(EthereumUnit.GWEI, self.return_unit, v)
 
-            data[provider.provider_title] = gasprice_data
+            data[provider.title] = gasprice_data
 
         return data

@@ -1,45 +1,65 @@
 import asyncio
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
 
-from ethereum_gasprice.async_wrapper.providers import (
+from httpx import AsyncClient
+
+from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
+from ethereum_gasprice.providers import (
     AsyncEtherchainProvider,
     AsyncEtherscanProvider,
     AsyncEthGasStationProvider,
 )
-from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
-from ethereum_gasprice.controller import GaspriceController
-from ethereum_gasprice.providers.base import BaseGaspriceProvider
+from ethereum_gasprice.providers.base import (
+    BaseAsyncAPIGaspriceProvider,
+    BaseGaspriceProvider,
+)
+
+from .sync_wrapper import GaspriceController
 
 __all__ = ["AsyncGaspriceController"]
 
 
 class AsyncGaspriceController(GaspriceController):
-    def __init__(self, **kwargs):
-        provider_priority = kwargs.get("provider_priority") or (
+    """Entrypoint for fetching gasprice."""
+
+    def __init__(
+        self,
+        *,
+        return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
+        providers_priority: Tuple[Type[BaseGaspriceProvider]] = (
             AsyncEtherscanProvider,
             AsyncEthGasStationProvider,
             AsyncEtherchainProvider,
-        )
-        super().__init__(providers_priority=provider_priority, **kwargs)
+        ),
+        settings: Optional[Dict[str, Optional[str]]] = None,
+    ):
+        super().__init__(return_unit=return_unit, providers_priority=providers_priority, settings=settings)
+
+    async def __aenter__(self):
+        """Init http client and return self."""
+        self._http_client = self._init_http_client()
+        return self
+
+    async def __aexit__(self, *args):
+        if not self._http_client.is_closed:
+            await self._http_client.aclose()
+
+    @classmethod
+    def _init_http_client(cls) -> AsyncClient:
+        return AsyncClient()
 
     def _init_provider(
         self,
         provider: Type[BaseGaspriceProvider],
     ) -> Any:
-        """Initialize provider class with correct parameter.
+        if not issubclass(provider, BaseAsyncAPIGaspriceProvider):
+            raise TypeError(
+                f"provider must be instance of {BaseAsyncAPIGaspriceProvider.__name__} and implement async functions"
+            )
 
-        :param provider:
-        :return:
-        """
-        if provider == AsyncEtherscanProvider:
-            return AsyncEtherscanProvider(self.etherscan_api_key)
-        elif provider == AsyncEthGasStationProvider:
-            return AsyncEthGasStationProvider(self.ethgasstation_api_key)
-        elif provider == AsyncEtherchainProvider:
-            return AsyncEtherchainProvider()
-        else:
-            raise ValueError("no provider implementation found")
+        return super()._init_provider(provider)
 
+    # TODO follow DRY, unify functions
     async def get_gasprice_by_strategy(
         self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST
     ) -> Optional[int]:
@@ -65,7 +85,6 @@ class AsyncGaspriceController(GaspriceController):
         """
         for provider in self.providers_priority:
             provider_instance = self._init_provider(provider)
-
             status, gasprice_data = await provider_instance.get_gasprice()
             if not status:
                 continue
@@ -99,6 +118,6 @@ class AsyncGaspriceController(GaspriceController):
             for k, v in gasprice_data.items():
                 gasprice_data[k] = self._convert_units(EthereumUnit.GWEI, self.return_unit, v)
 
-            data[provider.provider_title] = gasprice_data
+            data[provider.title] = gasprice_data
 
         return data

@@ -13,7 +13,7 @@ __all__ = ["Web3Provider"]
 class Web3Provider(BaseGaspriceProvider):
     """Provider for Web3 RPC."""
 
-    provider_title = "web3"
+    title = "web3"
     env_var_title: str = "ETHGASPRICE_WEB3"
 
     def __init__(self, provider_link: str = None):
@@ -23,7 +23,7 @@ class Web3Provider(BaseGaspriceProvider):
         """
         self.provider_link: str = provider_link or getenv(self.env_var_title)
 
-    def _init_web3(self) -> Optional[Web3]:
+    def _init_web3(self) -> Optional["Web3"]:
         if not self.provider_link:
             return None
         elif self.provider_link.startswith("http"):

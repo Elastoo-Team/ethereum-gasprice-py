@@ -1,45 +1,44 @@
-from os import getenv
 from typing import Dict, Optional, Tuple
 
-import requests
-
 from ethereum_gasprice.consts import GaspriceStrategy
-from ethereum_gasprice.providers.base import BaseGaspriceProvider
+from ethereum_gasprice.providers.base import (
+    BaseAsyncAPIGaspriceProvider,
+    BaseSyncAPIGaspriceProvider,
+)
 
-__all__ = ["EtherscanProvider"]
+__all__ = ["EtherscanProvider", "AsyncEtherscanProvider"]
 
 
-class EtherscanProvider(BaseGaspriceProvider):
+class EtherscanProvider(BaseSyncAPIGaspriceProvider):
     """Provider for Etherscan Gas Tracker (https://etherscan.io/gasTracker)"""
 
-    provider_title: str = "etherscan"
+    title: str = "etherscan"
     api_url: str = "https://api.etherscan.io/api/"
-    env_var_title: str = "ETHGASPRICE_ETHERSCAN"
+    secret_env_var_title: str = "ETHGASPRICE_ETHERSCAN_SECRET"
 
-    def __init__(
-        self,
-        api_key: str = None,
-    ):
-        self.api_key: str = api_key or getenv(self.env_var_title)
+    def request(self) -> Tuple[bool, dict]:
+        """Make request to API."""
+        try:
+            response = self.client.get(
+                url=self.api_url, params={"module": "gastracker", "action": "gasoracle", "apikey": self.get_secret()}
+            )
+            response_data = response.json()
 
-    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
-        """Get gasprice from provider and prepare data."""
-        success = False
+            if response.status_code == 200 and response_data.get("status") == "1":
+                return True, response_data
+
+        except Exception:
+            pass
+
+        return False, {}
+
+    def _proceed_response_data(self, response_data: dict) -> Dict[GaspriceStrategy, Optional[int]]:
+        """Unify data from response."""
         data = self._data_template.copy()
 
-        try:
-            response = requests.get(
-                url=self.api_url, params={"module": "gastracker", "action": "gasoracle", "apikey": self.api_key}
-            )
-        except Exception:
-            return success, data
+        if not response_data:
+            return data
 
-        response_data = response.json()
-
-        if response.status_code != 200 or not response_data.get("status") == "1":
-            return success, data
-
-        success = True
         data.update(
             {
                 GaspriceStrategy.REGULAR: response_data["result"].get("SafeGasPrice"),
@@ -47,5 +46,22 @@ class EtherscanProvider(BaseGaspriceProvider):
                 GaspriceStrategy.FASTEST: response_data["result"].get("FastGasPrice"),
             }
         )
+        return data
 
-        return success, data
+
+class AsyncEtherscanProvider(BaseAsyncAPIGaspriceProvider, EtherscanProvider):
+    async def request(self) -> Tuple[bool, dict]:
+        """Make request to API."""
+        try:
+            response = await self.client.get(
+                url=self.api_url, params={"module": "gastracker", "action": "gasoracle", "apikey": self.get_secret()}
+            )
+            response_data = response.json()
+
+            if response.status_code == 200 and response_data.get("status") == "1":
+                return True, response_data
+
+        except Exception:
+            pass
+
+        return False, {}
