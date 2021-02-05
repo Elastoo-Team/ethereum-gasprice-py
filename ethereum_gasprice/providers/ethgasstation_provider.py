@@ -1,10 +1,7 @@
 from typing import Dict, Optional, Tuple
 
 from ethereum_gasprice.consts import GaspriceStrategy
-from ethereum_gasprice.providers.base import (
-    BaseAsyncAPIGaspriceProvider,
-    BaseSyncAPIGaspriceProvider,
-)
+from ethereum_gasprice.providers.base import BaseAsyncAPIGaspriceProvider, BaseSyncAPIGaspriceProvider
 
 __all__ = ["EthGasStationProvider", "AsyncEthGasStationProvider"]
 

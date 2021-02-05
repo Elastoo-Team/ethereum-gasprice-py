@@ -3,11 +3,7 @@ from typing import Dict, Literal, Optional, Tuple, Type, Union
 from httpx import Client
 
 from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
-from ethereum_gasprice.providers import (
-    EtherchainProvider,
-    EtherscanProvider,
-    EthGasStationProvider,
-)
+from ethereum_gasprice.providers import EtherchainProvider, EtherscanProvider, EthGasStationProvider
 from ethereum_gasprice.providers.base import BaseGaspriceProvider
 
 from .base import BaseGaspriceController

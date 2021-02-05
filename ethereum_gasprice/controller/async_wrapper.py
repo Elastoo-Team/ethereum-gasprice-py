@@ -4,15 +4,8 @@ from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
 from httpx import AsyncClient
 
 from ethereum_gasprice.consts import EthereumUnit, GaspriceStrategy
-from ethereum_gasprice.providers import (
-    AsyncEtherchainProvider,
-    AsyncEtherscanProvider,
-    AsyncEthGasStationProvider,
-)
-from ethereum_gasprice.providers.base import (
-    BaseAsyncAPIGaspriceProvider,
-    BaseGaspriceProvider,
-)
+from ethereum_gasprice.providers import AsyncEtherchainProvider, AsyncEtherscanProvider, AsyncEthGasStationProvider
+from ethereum_gasprice.providers.base import BaseAsyncAPIGaspriceProvider, BaseGaspriceProvider
 
 from .sync_wrapper import GaspriceController
 
