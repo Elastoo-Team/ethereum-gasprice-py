@@ -22,14 +22,14 @@ class GaspriceController(BaseGaspriceController):
         self,
         *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers_priority: Tuple[Type[BaseGaspriceProvider]] = (
+        providers: Tuple[Type[BaseGaspriceProvider]] = (
             EtherscanProvider,
             EthGasStationProvider,
             EtherchainProvider,
         ),
         settings: Optional[Dict[str, Optional[str]]] = None
     ):
-        super().__init__(return_unit=return_unit, providers_priority=providers_priority, settings=settings)
+        super().__init__(return_unit=return_unit, providers=providers, settings=settings)
 
     def __enter__(self):
         """Init http client and return self."""
@@ -51,7 +51,7 @@ class GaspriceController(BaseGaspriceController):
         :param strategy:
         :return:
         """
-        for provider in self.providers_priority:
+        for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
             if not status or gasprice_data.get(strategy) is None:
@@ -66,11 +66,12 @@ class GaspriceController(BaseGaspriceController):
 
         :return:
         """
-        for provider in self.providers_priority:
+        for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
+
             if not status:
-                continue
+                return gasprice_data
 
             for k, v in gasprice_data.items():
                 gasprice_data[k] = self._convert_units(EthereumUnit.GWEI, self.return_unit, v)
@@ -89,7 +90,7 @@ class GaspriceController(BaseGaspriceController):
         """
         data = {}
 
-        for provider in self.providers_priority:
+        for provider in self.providers:
             data[provider.title] = {}
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()

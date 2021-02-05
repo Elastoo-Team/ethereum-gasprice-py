@@ -15,27 +15,27 @@ class BaseGaspriceController(ABC):
         self,
         *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers_priority: Tuple[Type[BaseGaspriceProvider]] = (),
+        providers: Tuple[Type[BaseGaspriceProvider]] = (),
         settings: Optional[Dict[str, Optional[str]]] = None
     ):
         """
         :param return_unit: ethereum unit, which
-        :param providers_priority: tuple of providers classes, which will be initialized and used in given order
+        :param providers: tuple of providers classes, which will be initialized and used in given order
         :param settings: Secrets for providers
         """
         self.return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = return_unit
-        self.providers_priority: Tuple[Type[BaseGaspriceProvider]] = providers_priority
+        self.providers: Tuple[Type[BaseGaspriceProvider]] = providers
 
         self._http_client: Optional[Union[Client, AsyncClient]] = None
 
-        if len(self.providers_priority) < 1:
+        if len(self.providers) < 1:
             raise ValueError("providers priority tuple is empty")
 
         if self.return_unit not in (EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH):
             raise ValueError("invalid return unit")
 
         if not settings:
-            self.settings = {provider.title: None for provider in providers_priority}
+            self.settings = {provider.title: None for provider in providers}
         else:
             self.settings = settings
 

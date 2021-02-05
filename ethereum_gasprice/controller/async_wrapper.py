@@ -26,14 +26,14 @@ class AsyncGaspriceController(GaspriceController):
         self,
         *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers_priority: Tuple[Type[BaseGaspriceProvider]] = (
+        providers: Tuple[Type[BaseGaspriceProvider]] = (
             AsyncEtherscanProvider,
             AsyncEthGasStationProvider,
             AsyncEtherchainProvider,
         ),
         settings: Optional[Dict[str, Optional[str]]] = None,
     ):
-        super().__init__(return_unit=return_unit, providers_priority=providers_priority, settings=settings)
+        super().__init__(return_unit=return_unit, providers=providers, settings=settings)
 
     async def __aenter__(self):
         """Init http client and return self."""
@@ -68,7 +68,7 @@ class AsyncGaspriceController(GaspriceController):
         :param strategy:
         :return:
         """
-        for provider in self.providers_priority:
+        for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = await provider_instance.get_gasprice()
             if not status or gasprice_data.get(strategy) is None:
@@ -83,7 +83,7 @@ class AsyncGaspriceController(GaspriceController):
 
         :return:
         """
-        for provider in self.providers_priority:
+        for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = await provider_instance.get_gasprice()
             if not status:
@@ -107,7 +107,7 @@ class AsyncGaspriceController(GaspriceController):
         :return:
         """
         data = {}
-        providers = [self._init_provider(provider) for provider in self.providers_priority]
+        providers = [self._init_provider(provider) for provider in self.providers]
         results = await asyncio.gather(*[provider.get_gasprice() for provider in providers])
 
         for result, provider in zip(results, providers):

@@ -16,9 +16,13 @@ __all__ = [
 
 class BaseGaspriceProvider(ABC):
     title: str = NotImplemented
+    secret_env_var_title: str = NotImplemented
 
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, secret: Optional[str] = None, *args, **kwargs):
+        self.secret: Optional[str] = secret
+
+    def get_secret(self) -> Optional[str]:
+        return self.secret or getenv(self.secret_env_var_title)
 
     @property
     def _data_template(self) -> Dict[GaspriceStrategy, Optional[int]]:
@@ -35,15 +39,7 @@ class BaseGaspriceProvider(ABC):
 
 
 class BaseAPIGaspriceProvider(BaseGaspriceProvider, ABC):
-    api_url: str = None
-    secret_env_var_title: str = None
-
-    def __init__(self, secret: Optional[str] = None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.secret: Optional[str] = secret
-
-    def get_secret(self) -> Optional[secret_env_var_title]:
-        return self.secret or getenv(self.secret_env_var_title)
+    api_url: str = NotImplemented
 
     @abstractmethod
     def request(self, *args, **kwargs):
