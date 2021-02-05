@@ -1,47 +1,39 @@
-from os import getenv
 from typing import Dict, Optional, Tuple
 
-import requests
-
 from ethereum_gasprice.consts import GaspriceStrategy
-from ethereum_gasprice.providers.base import BaseGaspriceProvider
+from ethereum_gasprice.providers.base import BaseAsyncAPIGaspriceProvider, BaseSyncAPIGaspriceProvider
 
-__all__ = ["EthGasStationProvider"]
+__all__ = ["EthGasStationProvider", "AsyncEthGasStationProvider"]
 
 
-class EthGasStationProvider(BaseGaspriceProvider):
+class EthGasStationProvider(BaseSyncAPIGaspriceProvider):
     """Provider for Eth Gas Station (https://ethgasstation.info/)"""
 
-    provider_title: str = "ethgasstation"
+    title: str = "ethgasstation"
     api_url: str = "https://ethgasstation.info/api/ethgasAPI.json"
-    env_var_title: str = "ETHGASPRICE_ETHGASSTATION"
+    secret_env_var_title: str = "ETHGASPRICE_ETHGASSTATION_SECRET"
 
-    def __init__(
-        self,
-        api_key: str = None,
-    ):
-        self.api_key: str = api_key or getenv(self.env_var_title)
-
-    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
-        """Get gasprice from provider and prepare data."""
-        success = False
-        data = self._data_template.copy()
-
-        if not self.api_key:
-            return success, data
-
+    def request(self) -> Tuple[bool, dict]:
+        """Make request to API."""
         try:
-            response = requests.get(url=self.api_url, params={"api-key": self.api_key})
+            response = self.client.get(url=self.api_url, params={"api-key": self.get_secret()})
+            response_data = response.json()
+
+            if response.status_code == 200:
+                return True, response_data
 
         except Exception:
-            return success, data
+            pass
 
-        response_data = response.json()
+        return False, {}
 
-        if response.status_code != 200:
-            return success, data
+    def _proceed_response_data(self, response_data: dict) -> Dict[GaspriceStrategy, Optional[int]]:
+        """Unify data from response."""
+        data = self._data_template.copy()
 
-        success = True
+        if not response_data:
+            return data
+
         data.update(
             {
                 GaspriceStrategy.SLOW: response_data.get("safeLow"),
@@ -54,4 +46,20 @@ class EthGasStationProvider(BaseGaspriceProvider):
         for k, v in data.items():
             data[k] = int(v) // 10 if v else None
 
-        return success, data
+        return data
+
+
+class AsyncEthGasStationProvider(BaseAsyncAPIGaspriceProvider, EthGasStationProvider):
+    async def request(self) -> Tuple[bool, dict]:
+        """Make request to API."""
+        try:
+            response = await self.client.get(url=self.api_url, params={"api-key": self.get_secret()})
+            response_data = response.json()
+
+            if response.status_code == 200:
+                return True, response_data
+
+        except Exception:
+            pass
+
+        return False, {}

@@ -16,4 +16,4 @@ class GaspriceStrategy(str, Enum):
     FASTEST = "fastest"
 
     def __repr__(self):
-        return "<{}: {!r}>".format(self.__class__.__name__, self._value_)
+        return "{!r}".format(self._value_)

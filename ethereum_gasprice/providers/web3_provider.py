@@ -1,4 +1,3 @@
-from os import getenv
 from typing import Dict, Optional, Tuple
 
 from eth_utils import currency
@@ -13,25 +12,20 @@ __all__ = ["Web3Provider"]
 class Web3Provider(BaseGaspriceProvider):
     """Provider for Web3 RPC."""
 
-    provider_title = "web3"
-    env_var_title: str = "ETHGASPRICE_WEB3"
+    title = "web3"
+    secret_env_var_title: str = "ETHGASPRICE_WEB3_SECRET"
 
-    def __init__(self, provider_link: str = None):
-        """
+    def _init_web3(self) -> Optional["Web3"]:
+        web_provider = self.get_secret()
 
-        :param provider_link: HTTP, Websocket or IPC provider
-        """
-        self.provider_link: str = provider_link or getenv(self.env_var_title)
-
-    def _init_web3(self) -> Optional[Web3]:
-        if not self.provider_link:
+        if not web_provider:
             return None
-        elif self.provider_link.startswith("http"):
-            return Web3(HTTPProvider(self.provider_link))
-        elif self.provider_link.startswith("ws"):
-            return Web3(WebsocketProvider(self.provider_link))
-        elif self.provider_link.endswith("ipc"):
-            return Web3(IPCProvider(self.provider_link))
+        elif web_provider.startswith("http"):
+            return Web3(HTTPProvider(web_provider))
+        elif web_provider.startswith("ws"):
+            return Web3(WebsocketProvider(web_provider))
+        elif web_provider.endswith("ipc"):
+            return Web3(IPCProvider(web_provider))
         else:
             return None
 
@@ -45,7 +39,7 @@ class Web3Provider(BaseGaspriceProvider):
         if not web3:
             return success, data
 
-        success = True
         data[GaspriceStrategy.REGULAR] = int(currency.from_wei(web3.eth.gasPrice, "gwei"))
+        success = True
 
         return success, data
