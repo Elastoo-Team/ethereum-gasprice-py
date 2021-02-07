@@ -69,7 +69,6 @@ class BaseGaspriceController(ABC):
         """Initialize provider class with secret (e.g. api key) and client.
 
         :param provider:
-        :return:
         """
         return provider(secret=self.settings.get(provider.title), client=self.http_client)
 
@@ -82,7 +81,6 @@ class BaseGaspriceController(ABC):
         :param unit_from: Origin gasprice unit. Usually it is in gwei
         :param unit_to: Target gasprice unit
         :param value: Gasprice itselt
-        :return:
         """
         if value is None or unit_from == unit_to:
             return value
@@ -95,23 +93,19 @@ class BaseGaspriceController(ABC):
     def get_gasprice_by_strategy(self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST) -> Optional[int]:
         """Get gasprice with chosen strategy from first available provider.
 
-        :param strategy:
-        :return:
+        :param strategy: strategy class or identifier (str)
         """
 
     @abstractmethod
     def get_gasprices(self) -> Optional[Dict[GaspriceStrategy, Optional[int]]]:
-        """Get all gasprice strategies values from first available provider.
-
-        :return:
-        """
+        """Get all gasprice strategies values from first available provider."""
 
     @abstractmethod
     def get_gasprice_from_all_sources(self) -> Dict[str, Dict[str, int]]:
         """Get all gasprices from all available providers.
 
-        It is useful when you don't trust single provider and what to verify gasprice with other providers.
-        It is a good pratice to calculate an average gasprice for every strategy and take the average gasprice value.
-
-        :return:
+        It is useful when you don't trust single provider and what to
+        verify gasprice with other providers. It is a good pratice to
+        calculate an average gasprice for every strategy and take the
+        average gasprice value.
         """

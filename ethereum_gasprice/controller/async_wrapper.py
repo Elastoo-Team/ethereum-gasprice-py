@@ -26,6 +26,11 @@ class AsyncGaspriceController(GaspriceController):
         ),
         settings: Optional[Dict[str, Optional[str]]] = None,
     ):
+        """
+        :param return_unit: type of return value
+        :param providers: gasprice provider class
+        :param settings: controller settings
+        """
         super().__init__(return_unit=return_unit, providers=providers, settings=settings)
 
     async def __aenter__(self):
@@ -58,8 +63,7 @@ class AsyncGaspriceController(GaspriceController):
     ) -> Optional[int]:
         """Get gasprice with chosen strategy from first available provider.
 
-        :param strategy:
-        :return:
+        :param strategy: strategy class or identifier (str)
         """
         for provider in self.providers:
             provider_instance = self._init_provider(provider)
@@ -72,10 +76,7 @@ class AsyncGaspriceController(GaspriceController):
         return None
 
     async def get_gasprices(self) -> Optional[Dict[GaspriceStrategy, Optional[int]]]:
-        """Get all gasprice strategies values from first available provider.
-
-        :return:
-        """
+        """Get all gasprice strategies values from first available provider."""
         for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = await provider_instance.get_gasprice()
@@ -96,8 +97,6 @@ class AsyncGaspriceController(GaspriceController):
 
         It is useful when you don't trust single provider and what to verify gasprice with other providers.
         It is a good pratice to calculate an average gasprice for every strategy and take the average gasprice value.
-
-        :return:
         """
         data = {}
         providers = [self._init_provider(provider) for provider in self.providers]

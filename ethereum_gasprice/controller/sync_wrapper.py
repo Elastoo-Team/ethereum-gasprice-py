@@ -25,6 +25,11 @@ class GaspriceController(BaseGaspriceController):
         ),
         settings: Optional[Dict[str, Optional[str]]] = None
     ):
+        """
+        :param return_unit: type of return value
+        :param providers: gasprice provider class
+        :param settings: controller settings
+        """
         super().__init__(return_unit=return_unit, providers=providers, settings=settings)
 
     def __enter__(self):
@@ -44,8 +49,7 @@ class GaspriceController(BaseGaspriceController):
     def get_gasprice_by_strategy(self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST) -> Optional[int]:
         """Get gasprice with chosen strategy from first available provider.
 
-        :param strategy:
-        :return:
+        :param strategy: strategy class or identifier (str)
         """
         for provider in self.providers:
             provider_instance = self._init_provider(provider)
@@ -58,10 +62,7 @@ class GaspriceController(BaseGaspriceController):
         return None
 
     def get_gasprices(self) -> Optional[Dict[GaspriceStrategy, Optional[int]]]:
-        """Get all gasprice strategies values from first available provider.
-
-        :return:
-        """
+        """Get all gasprice strategies values from first available provider."""
         for provider in self.providers:
             provider_instance = self._init_provider(provider)
             status, gasprice_data = provider_instance.get_gasprice()
@@ -79,10 +80,10 @@ class GaspriceController(BaseGaspriceController):
     def get_gasprice_from_all_sources(self) -> Dict[str, Dict[str, int]]:
         """Get all gasprices from all available providers.
 
-        It is useful when you don't trust single provider and what to verify gasprice with other providers.
-        It is a good pratice to calculate an average gasprice for every strategy and take the average gasprice value.
-
-        :return:
+        It is useful when you don't trust single provider and what to
+        verify gasprice with other providers. It is a good pratice to
+        calculate an average gasprice for every strategy and take the
+        average gasprice value.
         """
         data = {}
 
