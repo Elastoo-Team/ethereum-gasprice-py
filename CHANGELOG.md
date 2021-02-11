@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1] - 2021-02-11
+
+### Added
+
+- [Docs to readthedocs](https://ethereum-gasprice.readthedocs.io/en/latest/). Special thanks to
+  [@Egnod](https://github.com/Egnod)
+
+### Changed
+
+- Poetry core requirements
+
 ## [1.2.0] - 2021-02-05
 
 ### Added

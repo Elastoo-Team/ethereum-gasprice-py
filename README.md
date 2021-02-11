@@ -3,6 +3,7 @@ Ethereum gasprice: Actual gasprice for ethereum blockchain
 
 [![PyPI](https://img.shields.io/pypi/v/ethereum-gasprice)](https://pypi.org/project/ethereum-gasprice/)
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FElastoo-Team%2Fethereum-gasprice-py%2Fbadge&style=flat)](https://actions-badge.atrox.dev/Elastoo-Team/ethereum-gasprice-py/goto)
+[![Documentation Status](https://readthedocs.org/projects/ethereum-gasprice/badge/?version=latest)](https://ethereum-gasprice.readthedocs.io/en/latest/?badge=latest)
 
 Library for fetching actual ethereum blockchain gasprice from different sources:
 [Etherscan Gas Tracker](https://etherscan.io/gastracker), [Eth Gas Station](https://ethgasstation.info/),
@@ -40,6 +41,11 @@ controller = GaspriceController(
 gasprice = controller.get_gasprice_by_strategy(GaspriceStrategy.FAST)
 print(gasprice)  # output: 69
 ```
+
+# Docs
+
+Read base API references and other part documentation
+on [ethereum-gasprice.readthedocs.io](https://ethereum-gasprice.readthedocs.io/en/latest/)
 
 # Usage
 
@@ -85,7 +91,7 @@ with GaspriceStrategy(
     # Do something
     pass
 
-async with  AsyncGaspriceController(
+async with AsyncGaspriceController(
         return_unit=EthereumUnit.WEI,
         providers=async_providers,
         settings=settings
