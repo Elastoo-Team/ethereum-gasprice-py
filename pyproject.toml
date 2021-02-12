@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ethereum-gasprice"
-version = "1.2.1"
+version = "1.2.2"
 description = "Tool for fetching actual gasprice in ethereum blockchain"
 authors = ["Nikita Yugov <nikitosnikn@yandex.ru>"]
 license = "MIT"
