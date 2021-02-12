@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.2] - 2021-02-13
+
+### Changed
+
+- Fixed docs API reference
+- Issue [#7](https://github.com/Elastoo-Team/ethereum-gasprice-py/issues/7)
+- Issue [#8](https://github.com/Elastoo-Team/ethereum-gasprice-py/issues/8)
+
+
 ## [1.2.1] - 2021-02-11
 
 ### Added

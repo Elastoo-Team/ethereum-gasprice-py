@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
+from typing import Any, Dict, Literal, Optional, Sequence, Type, Union
 
 from httpx import AsyncClient
 
@@ -19,7 +19,7 @@ class AsyncGaspriceController(GaspriceController):
         self,
         *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers: Tuple[Type[BaseGaspriceProvider]] = (
+        providers: Sequence[Type[BaseGaspriceProvider]] = (
             AsyncEtherscanProvider,
             AsyncEthGasStationProvider,
             AsyncEtherchainProvider,

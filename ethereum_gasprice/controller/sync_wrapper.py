@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Optional, Tuple, Type, Union
+from typing import Dict, Literal, Optional, Sequence, Type, Union
 
 from httpx import Client
 
@@ -18,7 +18,7 @@ class GaspriceController(BaseGaspriceController):
         self,
         *,
         return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers: Tuple[Type[BaseGaspriceProvider]] = (
+        providers: Sequence[Type[BaseGaspriceProvider]] = (
             EtherscanProvider,
             EthGasStationProvider,
             EtherchainProvider,
