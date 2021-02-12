@@ -25,8 +25,8 @@ copyright = "2021, Nikita Yugov"
 author = "Nikita Yugov"
 
 # The full version, including alpha/beta/rc tags
-release = "1.2.1"
-version = "1.2.1"
+release = "1.2.2"
+version = "1.2.2"
 
 # -- General configuration ---------------------------------------------------
 
