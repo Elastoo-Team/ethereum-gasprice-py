@@ -82,12 +82,14 @@ class BaseGaspriceController(ABC):
         :param unit_to: Target gasprice unit
         :param value: Gasprice itselt
         """
-        if value is None or unit_from == unit_to:
-            return value
-        if unit_to == EthereumUnit.WEI:
+        if value is None:
+            return None
+        elif unit_from == unit_to:
+            return int(value)
+        elif unit_to == EthereumUnit.WEI:
             return int(to_wei(value, unit_from))
-
-        return int(from_wei(to_wei(value, unit_from), unit_to))
+        else:
+            return int(from_wei(to_wei(value, unit_from), unit_to))
 
     @abstractmethod
     def get_gasprice_by_strategy(self, strategy: Union[GaspriceStrategy, str] = GaspriceStrategy.FAST) -> Optional[int]:
