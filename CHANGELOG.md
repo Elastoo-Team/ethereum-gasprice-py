@@ -1,5 +1,13 @@
 # Changelog
 
+
+## [1.2.3] - 2021-02-26
+
+### Changed
+
+- Added type hinting
+- Issue [#14](https://github.com/Elastoo-Team/ethereum-gasprice-py/issues/14)
+
 ## [1.2.2] - 2021-02-13
 
 ### Changed

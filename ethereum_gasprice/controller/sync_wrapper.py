@@ -41,8 +41,8 @@ class GaspriceController(BaseGaspriceController):
         if not self._http_client.is_closed:
             self._http_client.close()
 
-    @classmethod
-    def _init_http_client(cls) -> Client:
+    @staticmethod
+    def _init_http_client() -> Client:
         return Client()
 
     # TODO follow DRY, unify functions
@@ -85,7 +85,7 @@ class GaspriceController(BaseGaspriceController):
         calculate an average gasprice for every strategy and take the
         average gasprice value.
         """
-        data = {}
+        data: Dict[str, Dict[str, int]] = {}
 
         for provider in self.providers:
             data[provider.title] = {}

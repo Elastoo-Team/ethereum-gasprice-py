@@ -42,8 +42,8 @@ class AsyncGaspriceController(GaspriceController):
         if not self._http_client.is_closed:
             await self._http_client.aclose()
 
-    @classmethod
-    def _init_http_client(cls) -> AsyncClient:
+    @staticmethod
+    def _init_http_client() -> AsyncClient:
         return AsyncClient()
 
     def _init_provider(

@@ -42,7 +42,7 @@ class BaseAPIGaspriceProvider(BaseGaspriceProvider, ABC):
     api_url: str = NotImplemented
 
     @abstractmethod
-    def request(self, *args, **kwargs):
+    def request(self):
         pass
 
     @abstractmethod
@@ -53,9 +53,9 @@ class BaseAPIGaspriceProvider(BaseGaspriceProvider, ABC):
 class BaseSyncAPIGaspriceProvider(BaseAPIGaspriceProvider, ABC):
     def __init__(self, *, secret: Optional[str] = None, client: Optional[Client] = None, **kwargs):
         super().__init__(secret=secret, **kwargs)
-        self.client: Client = client
+        self.client: Optional[Client] = client
 
-    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
+    def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Dict[str, int]]]:
         """Get gasprice from provider and prepare data."""
         success, response_data = self.request()
         return success, self._proceed_response_data(response_data)
@@ -64,7 +64,7 @@ class BaseSyncAPIGaspriceProvider(BaseAPIGaspriceProvider, ABC):
 class BaseAsyncAPIGaspriceProvider(BaseAPIGaspriceProvider, ABC):
     def __init__(self, *, secret: Optional[str] = None, client: Optional[AsyncClient] = None, **kwargs):
         super().__init__(secret=secret, **kwargs)
-        self.client: AsyncClient = client
+        self.client: Optional[AsyncClient] = client
 
     async def get_gasprice(self) -> Tuple[bool, Dict[GaspriceStrategy, Optional[int]]]:
         """Get gasprice from provider and prepare data."""
