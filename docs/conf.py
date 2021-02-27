@@ -62,11 +62,11 @@ html_theme = "furo"
 html_static_path = ["_static"]
 html_title = "ethereum_gasprice"
 
-"""html_favicon = "_static/logo.ico"
+html_favicon = "_static/logo.ico"
 
 html_theme_options = {
     "light_logo": "logo.svg",
     "dark_logo": "logo.svg",
-}"""
+}
 
 html_sidebars = {"index": ["sidebar.html"]}
