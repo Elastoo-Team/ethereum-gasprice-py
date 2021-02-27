@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://github.com/elastoo-team/ethereum-gasprice-py">
+    <img src="https://raw.githubusercontent.com/elastoo-team/ethereum-gasprice-py/master/docs/_static/readme-logo.jpg">
+  </a>
+</p>
+
+
 Ethereum gasprice: Actual gasprice for ethereum blockchain
 =======================================
 
@@ -192,3 +199,7 @@ see CHANGELOG.md file
 # License
 
 Ethereum gasprice is licensed under the terms of the MIT License (see the file LICENSE).
+
+# Special thanks
+
+* [Artem Filippov](https://www.behance.net/filippowarfce4)
