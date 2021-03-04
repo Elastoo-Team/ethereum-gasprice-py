@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Literal, Optional, Tuple, Type, Union
+from typing import Any, Dict, Literal, Optional, Sequence, Type, Union
 
 from eth_utils import from_wei, to_wei
 from httpx import AsyncClient, Client
@@ -14,8 +14,8 @@ class BaseGaspriceController(ABC):
     def __init__(
         self,
         *,
-        return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
-        providers: Tuple[Type[BaseGaspriceProvider]] = (),
+        return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI] = EthereumUnit.WEI,
+        providers: Sequence[Type[BaseGaspriceProvider]] = (),
         settings: Optional[Dict[str, Optional[str]]] = None
     ):
         """
@@ -23,15 +23,15 @@ class BaseGaspriceController(ABC):
         :param providers: tuple of providers classes, which will be initialized and used in given order
         :param settings: Secrets for providers
         """
-        self.return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = return_unit
-        self.providers: Tuple[Type[BaseGaspriceProvider]] = providers
+        self.return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI] = return_unit
+        self.providers: Sequence[Type[BaseGaspriceProvider]] = providers
 
         self._http_client: Optional[Union[Client, AsyncClient]] = None
 
         if len(self.providers) < 1:
             raise ValueError("providers priority tuple is empty")
 
-        if self.return_unit not in (EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH):
+        if self.return_unit not in (EthereumUnit.WEI, EthereumUnit.GWEI):
             raise ValueError("invalid return unit")
 
         if not settings:

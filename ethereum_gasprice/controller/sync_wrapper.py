@@ -17,7 +17,7 @@ class GaspriceController(BaseGaspriceController):
     def __init__(
         self,
         *,
-        return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI, EthereumUnit.ETH] = EthereumUnit.WEI,
+        return_unit: Literal[EthereumUnit.WEI, EthereumUnit.GWEI] = EthereumUnit.WEI,
         providers: Sequence[Type[BaseGaspriceProvider]] = (
             EtherscanProvider,
             EthGasStationProvider,

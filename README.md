@@ -188,7 +188,7 @@ print(provider.get_gasprice())
 
 - [x] Initital release
 - [x] Async implementation of controller, providers
-- [ ] Write documentation
+- [x] Write documentation
 - [ ] Write unit tests with pytest
 - [ ] Integrate tests, docs and auto publishing to pypi in github pipeline
 
