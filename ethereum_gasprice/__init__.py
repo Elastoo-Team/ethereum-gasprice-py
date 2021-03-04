@@ -4,7 +4,9 @@ from .providers import (
     AsyncEtherchainProvider,
     AsyncEtherscanProvider,
     AsyncEthGasStationProvider,
+    AsyncPoaProvider,
     EtherchainProvider,
     EtherscanProvider,
     EthGasStationProvider,
+    PoaProvider,
 )

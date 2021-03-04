@@ -27,7 +27,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-httpx = "^0.16.1"
+httpx = ">= 0.10.0, <= 1.0.0"
 eth-utils = ">=1.0.0"
 web3 = {version = ">=5.0.0", optional = true}
 

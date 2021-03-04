@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] - 2021-03-04
+
+### Added
+
+- [Poa Provider](https://gasprice.poa.network/)
+- Logo to repository, docs
+
+### Changed
+
+- HTTPX dependency version (from 0.10.0 to 1.0.0)
+- Removed ETH from EthereumUnit cause of decimal rounding
 
 ## [1.2.3] - 2021-02-26
 
@@ -15,7 +26,6 @@
 - Fixed docs API reference
 - Issue [#7](https://github.com/Elastoo-Team/ethereum-gasprice-py/issues/7)
 - Issue [#8](https://github.com/Elastoo-Team/ethereum-gasprice-py/issues/8)
-
 
 ## [1.2.1] - 2021-02-11
 

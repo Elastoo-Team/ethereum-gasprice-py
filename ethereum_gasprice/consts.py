@@ -6,7 +6,6 @@ __all__ = ["EthereumUnit", "GaspriceStrategy"]
 class EthereumUnit(str, Enum):
     WEI = "wei"
     GWEI = "gwei"
-    ETH = "eth"
 
 
 class GaspriceStrategy(str, Enum):
