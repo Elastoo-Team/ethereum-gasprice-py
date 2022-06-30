@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2022-06-30
+
+### Changed
+
+- Bumped versions of deps.
+
 ## [1.3.0] - 2021-03-04
 
 ### Added
